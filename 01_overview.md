@@ -57,6 +57,19 @@ graph TB
 > or gain cross-region reach via a marketplace listing. Database replication is the infrastructure
 > layer that enables cross-region marketplace delivery.
 
+## Comparison Matrix
+
+| Option | Complexity | Versioning | Cross-Region | Audience | Monetisation | Data+Logic | Best For |
+|---|---|---|---|---|---|---|---|
+| **1. Direct Share** | Low | No | No | Known accounts, same region | No | Data only | Simple, fast zero-copy sharing |
+| **2. Marketplace** | Medium | Via listings | Yes (auto-fulfillment) | Public or private, any region | Yes (paid/free/trial) | Data (or app pkg) | Broad distribution & monetisation |
+| **3. Org Listings** | Medium | Via listings | Yes (auto-fulfillment) | Accounts within your org | No | Data (or app pkg) | Internal data product catalogue |
+| **4. Declarative (TYPE=DATA)** | Medium | Automatic (LIVE) | Yes (auto-fulfillment) | Any Snowflake account | Via listing | Data + semantic views + agents | Versioned data products, no code |
+| **5. Native Apps (TYPE=APPLICATION)** | High | Manual (versions/patches) | Yes (auto-fulfillment) | Any Snowflake account | Via listing (billable events) | Data + logic + UI | Full applications with business logic |
+| **6. Data Clean Rooms** | High | N/A (templates) | Yes (auto-fulfillment) | Multi-party collaborators | No | Aggregate results only | Privacy-preserving collaboration |
+| **7. DB Replication** | Medium | N/A | Yes (core purpose) | Target accounts you manage | No | Data only | DR, BC, cross-region sync |
+| **8. Reader Accounts** | Low | No | Same region (Client Redirect for multi-region) | Non-Snowflake consumers | No | Data only | External users without Snowflake |
+
 ---
 
 ## 1. Direct Data Sharing (Secure Shares)
@@ -422,18 +435,3 @@ Use these questions in order to identify the right sharing mechanism:
 
 8. **Is same-region, zero-copy sharing to known accounts sufficient?**
    - Yes → **Direct Data Sharing** (option 1). Stop.
-
----
-
-## Comparison Matrix
-
-| Option | Complexity | Versioning | Cross-Region | Audience | Monetisation | Data+Logic | Best For |
-|---|---|---|---|---|---|---|---|
-| **1. Direct Share** | Low | No | No | Known accounts, same region | No | Data only | Simple, fast zero-copy sharing |
-| **2. Marketplace** | Medium | Via listings | Yes (auto-fulfillment) | Public or private, any region | Yes (paid/free/trial) | Data (or app pkg) | Broad distribution & monetisation |
-| **3. Org Listings** | Medium | Via listings | Yes (auto-fulfillment) | Accounts within your org | No | Data (or app pkg) | Internal data product catalogue |
-| **4. Declarative (TYPE=DATA)** | Medium | Automatic (LIVE) | Yes (auto-fulfillment) | Any Snowflake account | Via listing | Data + semantic views + agents | Versioned data products, no code |
-| **5. Native Apps (TYPE=APPLICATION)** | High | Manual (versions/patches) | Yes (auto-fulfillment) | Any Snowflake account | Via listing (billable events) | Data + logic + UI | Full applications with business logic |
-| **6. Data Clean Rooms** | High | N/A (templates) | Yes (auto-fulfillment) | Multi-party collaborators | No | Aggregate results only | Privacy-preserving collaboration |
-| **7. DB Replication** | Medium | N/A | Yes (core purpose) | Target accounts you manage | No | Data only | DR, BC, cross-region sync |
-| **8. Reader Accounts** | Low | No | Same region (Client Redirect for multi-region) | Non-Snowflake consumers | No | Data only | External users without Snowflake |
