@@ -70,6 +70,59 @@ graph TB
 | **7. DB Replication** | Medium | N/A | Yes (core purpose) | Target accounts you manage | No | Data only | DR, BC, cross-region sync |
 | **8. Reader Accounts** | Low | No | Same region (Client Redirect for multi-region) | Non-Snowflake consumers | No | Data only | External users without Snowflake |
 
+## Decision Tree
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#29B5E8', 'primaryTextColor': '#fff', 'primaryBorderColor': '#11567F', 'lineColor': '#71797E', 'fontFamily': 'Inter, sans-serif'}}}%%
+
+flowchart TD
+    Q1{"Is the consumer<br/>a Snowflake customer?"}
+    Q2{"Need privacy-preserving<br/>collaboration?<br/><i>Raw data must not be exposed</i>"}
+    Q3{"Primarily for DR or<br/>cross-region DB sync?"}
+    Q4{"Need to ship application<br/>logic alongside data?<br/><i>Procs, UDFs, Streamlit</i>"}
+    Q5{"Need versioned data<br/>products with manifest?<br/><i>No custom logic</i>"}
+    Q6{"Sharing within your<br/>organisation's Internal<br/>Marketplace?"}
+    Q7{"Need cross-region delivery,<br/>monetisation, or public<br/>discoverability?"}
+    Q8{"Same-region, zero-copy<br/>to known accounts<br/>sufficient?"}
+
+    A1["🟢 <b>Reader Account</b><br/>Option 8"]
+    A2["🔵 <b>Data Clean Room</b><br/>Option 6"]
+    A3["🟡 <b>Database Replication</b><br/>Option 7"]
+    A4["🟣 <b>Native Apps</b><br/>Option 5"]
+    A5["🔵 <b>Declarative Sharing</b><br/>Option 4"]
+    A6["🟡 <b>Org Listings</b><br/>Option 3"]
+    A7["🟡 <b>Marketplace Listing</b><br/>Option 2"]
+    A8["🟢 <b>Direct Share</b><br/>Option 1"]
+
+    Q1 -->|No| A1
+    Q1 -->|Yes| Q2
+    Q2 -->|Yes| A2
+    Q2 -->|No| Q3
+    Q3 -->|Yes| A3
+    Q3 -->|No| Q4
+    Q4 -->|Yes| A4
+    Q4 -->|No| Q5
+    Q5 -->|Yes| A5
+    Q5 -->|No| Q6
+    Q6 -->|Yes| A6
+    Q6 -->|No| Q7
+    Q7 -->|Yes| A7
+    Q7 -->|No| Q8
+    Q8 -->|Yes| A8
+
+    classDef question fill:#F4F4F4,stroke:#71797E,color:#333,rx:12,ry:12
+    classDef green fill:#4CAF50,stroke:#2E7D32,color:#fff,rx:8,ry:8
+    classDef yellow fill:#FF9800,stroke:#E65100,color:#fff,rx:8,ry:8
+    classDef blue fill:#29B5E8,stroke:#11567F,color:#fff,rx:8,ry:8
+    classDef purple fill:#7B1FA2,stroke:#4A148C,color:#fff,rx:8,ry:8
+
+    class Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8 question
+    class A1,A8 green
+    class A3,A6,A7 yellow
+    class A2,A5 blue
+    class A4 purple
+```
+
 ---
 
 ## 1. Direct Data Sharing (Secure Shares)
@@ -399,57 +452,4 @@ DROP MANAGED ACCOUNT reader_acct1;
 **Cross-region support**
 Reader accounts are created in the same region as the provider. For cross-region reader access, use Client Redirect with reader accounts in multiple regions (requires Business Critical edition).
 
----
 
-## Decision Tree
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#29B5E8', 'primaryTextColor': '#fff', 'primaryBorderColor': '#11567F', 'lineColor': '#71797E', 'fontFamily': 'Inter, sans-serif'}}}%%
-
-flowchart TD
-    Q1{"Is the consumer<br/>a Snowflake customer?"}
-    Q2{"Need privacy-preserving<br/>collaboration?<br/><i>Raw data must not be exposed</i>"}
-    Q3{"Primarily for DR or<br/>cross-region DB sync?"}
-    Q4{"Need to ship application<br/>logic alongside data?<br/><i>Procs, UDFs, Streamlit</i>"}
-    Q5{"Need versioned data<br/>products with manifest?<br/><i>No custom logic</i>"}
-    Q6{"Sharing within your<br/>organisation's Internal<br/>Marketplace?"}
-    Q7{"Need cross-region delivery,<br/>monetisation, or public<br/>discoverability?"}
-    Q8{"Same-region, zero-copy<br/>to known accounts<br/>sufficient?"}
-
-    A1["🟢 <b>Reader Account</b><br/>Option 8"]
-    A2["🔵 <b>Data Clean Room</b><br/>Option 6"]
-    A3["🟡 <b>Database Replication</b><br/>Option 7"]
-    A4["🟣 <b>Native Apps</b><br/>Option 5"]
-    A5["🔵 <b>Declarative Sharing</b><br/>Option 4"]
-    A6["🟡 <b>Org Listings</b><br/>Option 3"]
-    A7["🟡 <b>Marketplace Listing</b><br/>Option 2"]
-    A8["🟢 <b>Direct Share</b><br/>Option 1"]
-
-    Q1 -->|No| A1
-    Q1 -->|Yes| Q2
-    Q2 -->|Yes| A2
-    Q2 -->|No| Q3
-    Q3 -->|Yes| A3
-    Q3 -->|No| Q4
-    Q4 -->|Yes| A4
-    Q4 -->|No| Q5
-    Q5 -->|Yes| A5
-    Q5 -->|No| Q6
-    Q6 -->|Yes| A6
-    Q6 -->|No| Q7
-    Q7 -->|Yes| A7
-    Q7 -->|No| Q8
-    Q8 -->|Yes| A8
-
-    classDef question fill:#F4F4F4,stroke:#71797E,color:#333,rx:12,ry:12
-    classDef green fill:#4CAF50,stroke:#2E7D32,color:#fff,rx:8,ry:8
-    classDef yellow fill:#FF9800,stroke:#E65100,color:#fff,rx:8,ry:8
-    classDef blue fill:#29B5E8,stroke:#11567F,color:#fff,rx:8,ry:8
-    classDef purple fill:#7B1FA2,stroke:#4A148C,color:#fff,rx:8,ry:8
-
-    class Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8 question
-    class A1,A8 green
-    class A3,A6,A7 yellow
-    class A2,A5 blue
-    class A4 purple
-```
